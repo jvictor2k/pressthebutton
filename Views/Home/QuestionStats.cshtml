@@ -1,0 +1,13 @@
+﻿@model PressTheButton.ViewModels.QuestionStatsViewModel
+
+<div class="container mt-5">
+    <h2 class="mb-4">Statistics for Question: @Model.Question.Text</h2>
+
+    <p>Total Responses: @Model.TotalResponses</p>
+
+    <p>Percentage of Yes Responses: @Model.YesPercentage.ToString("0.00")%</p>
+
+    <p>Percentage of No Responses: @Model.NoPercentage.ToString("0.00")%</p>
+
+    <a asp-action="Index" class="btn btn-primary mt-3">Back to Questions</a>
+</div>
