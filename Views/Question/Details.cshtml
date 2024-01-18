@@ -1,0 +1,33 @@
+﻿@model PressTheButton.Models.Question
+
+<h2>Detalhes do Dilema</h2>
+
+<div>
+    <h4 class="mt-4 mb-3">Dilema</h4>
+    <dl class="row">
+        <dt class="col-sm-2">
+            Id
+        </dt>
+        <dd class="col-sm-10">
+            @Model.QuestionId
+        </dd>
+
+        <dt class="col-sm-2">
+            Proposta
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Text
+        </dd>
+
+        <dt class="col-sm-2">
+            Desvantagem
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Negative
+        </dd>
+    </dl>
+</div>
+<p>
+    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.QuestionId">Editar</a>
+    <a class="btn btn-primary" asp-action="Index">Retornar</a>
+</p>

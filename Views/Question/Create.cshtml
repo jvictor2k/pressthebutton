@@ -1,0 +1,23 @@
+﻿@model PressTheButton.Models.Question
+
+<h2>Criar novo Dilema</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Text"></label>
+        <input asp-for="Text" class="form-control" />
+        <span asp-validation-for="Text" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Negative"></label>
+        <input asp-for="Negative" class="form-control" />
+        <span asp-validation-for="Negative" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3 mb-3">
+        <input type="submit" value="Confirmar" class="btn btn-success" />
+    </div>
+</form>
+
+<a class="btn btn-primary" asp-action="Index">Retornar</a>

@@ -1,14 +1,12 @@
-﻿namespace PressTheButton.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PressTheButton.Models
 {
+    [Table("Questions")]
     public class Question
     {
-        public Question(int questionId, string text, string negative)
-        {
-            QuestionId = questionId;
-            Text = text;
-            Negative = negative;
-        }
-
+        [Key]
         public int QuestionId { get; set; }
         public string Text { get; set; }
         public string Negative {  get; set; }

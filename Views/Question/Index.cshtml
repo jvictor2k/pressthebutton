@@ -1,0 +1,31 @@
+﻿@model List<PressTheButton.Models.Question>
+
+<h2>Dilemas</h2>
+
+<a class="btn btn-info mt-3 mb-3" asp-action="Create">Criar novo Dilema</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Proposta</th>
+            <th>Desvantagem</th>
+            <th>Opções</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var question in Model)
+        {
+            <tr>
+                <td>@question.QuestionId</td>
+                <td>@question.Text</td>
+                <td>@question.Negative</td>
+                <td>
+                    <a class="btn btn-secondary" asp-action="Details" asp-route-id="@question.QuestionId">Detalhes</a>
+                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@question.QuestionId">Editar</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@question.QuestionId">Deletar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

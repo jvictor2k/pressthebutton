@@ -52,12 +52,21 @@ namespace PressTheButton.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Question question)
         {
-            if(!ModelState.IsValid)
+            try
             {
-                _context.Add(question);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(question);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
+            catch (Exception ex)
+            {
+                // Lidar com exceções, se necessário
+                ModelState.AddModelError(string.Empty, "Ocorreu um erro ao salvar o item.");
+            }
+
             return View(question);
         }
 
