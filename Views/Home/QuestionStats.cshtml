@@ -1,13 +1,19 @@
 ﻿@model PressTheButton.ViewModels.QuestionStatsViewModel
 
-<div class="container mt-5">
-    <h2 class="mb-4">Statistics for Question: @Model.Question.Text</h2>
+<div class="container">
+    <div class="row">
+        <h2 class="mt-5 text-center">@Html.DisplayFor(model => model.Question.Text)</h2>
+        <h2 class="text-center">Mas...</h2>
+        <h2 class="mb-5 text-center">@Html.DisplayFor(model => model.Question.Negative)</h2>
+    </div>
+</div>
 
-    <p>Total Responses: @Model.TotalResponses</p>
+<p class="mt-5 text-center text-primary">Total de respostas: @Model.TotalResponses</p>
 
-    <p>Percentage of Yes Responses: @Model.YesPercentage.ToString("0.00")%</p>
+<p class="text-center text-success">Apertaram o botão: @Model.YesPercentage.ToString("0.00")%</p>
 
-    <p>Percentage of No Responses: @Model.NoPercentage.ToString("0.00")%</p>
+<p class="mb-5 text-center text-danger">Não apertaram o botão: @Model.NoPercentage.ToString("0.00")%</p>
 
-    <a asp-action="Index" class="btn btn-primary mt-3">Back to Questions</a>
+<div class="text-center">
+    <a asp-action="Index" class="btn btn-primary mt-3">Próximo</a>
 </div>
