@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PressTheButton.Context;
 using PressTheButton.Models;
 
 namespace PressTheButton.Controllers
 {
+    [Authorize]
     public class QuestionController : Controller
     {
         private readonly AppDbContext _context;

@@ -28,25 +28,45 @@ namespace PressTheButton.Controllers
             }
             else
             {
-                return View("Error");
+                return View("NoMoreQuestions");
             }
         }
 
         private Question GetRandomQuestion()
         {
-            int totalQuestions = _context.Questions.Count();
+            string userIdentifier = GetUserIdentifier();
 
-            if (totalQuestions > 0)
+            var unansweredQuestions = _context.Questions
+                .Where(q => !q.UserResponses.Any(ur => ur.UserIdentifier == userIdentifier))
+                .ToList();
+
+            int totalUnansweredQuestions = unansweredQuestions.Count();
+
+            if (totalUnansweredQuestions > 0)
             {
                 Random random = new Random();
-                int randomIndex = random.Next(totalQuestions);
+                int randomIndex = random.Next(totalUnansweredQuestions);
 
-                return _context.Questions.Skip(randomIndex).FirstOrDefault();
+                return unansweredQuestions[randomIndex];
             }
             else
             {
                 return null;
             }
+
+            //int totalQuestions = _context.Questions.Count();
+
+            //if (totalQuestions > 0)
+            //{
+            //    Random random = new Random();
+            //    int randomIndex = random.Next(totalQuestions);
+            //
+            //    return _context.Questions.Skip(randomIndex).FirstOrDefault();
+            //}
+            //else
+            //{
+            //    return null;
+            //}
         }
 
         [HttpPost]
@@ -55,7 +75,8 @@ namespace PressTheButton.Controllers
             var userResponse = new UserResponse
             {
                 QuestionId = questionId,
-                YesOrNo = true
+                YesOrNo = true,
+                UserIdentifier = GetUserIdentifier()
             };
 
             _context.UserResponses.Add(userResponse);
@@ -70,13 +91,28 @@ namespace PressTheButton.Controllers
             var userResponse = new UserResponse
             {
                 QuestionId = questionId,
-                YesOrNo = false
+                YesOrNo = false,
+                UserIdentifier = GetUserIdentifier()
             };
 
             _context.UserResponses.Add(userResponse);
             _context.SaveChanges();
 
             return RedirectToAction("QuestionStats", new { questionId });
+        }
+
+        private string GetUserIdentifier()
+        {
+            if(HttpContext.Request.Cookies.ContainsKey("userIdentifier"))
+            {
+                return HttpContext.Request.Cookies["userIdentifier"];
+            }
+            else
+            {
+                string identifier = Guid.NewGuid().ToString();
+                HttpContext.Response.Cookies.Append("userIdentifier", identifier);
+                return identifier;
+            }
         }
 
         public IActionResult QuestionStats(int questionId)

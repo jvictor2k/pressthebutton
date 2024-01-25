@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PressTheButton.Context;
 
@@ -11,9 +12,11 @@ using PressTheButton.Context;
 namespace PressTheButton.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240119025445_AddUserIdentifier")]
+    partial class AddUserIdentifier
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,7 +239,7 @@ namespace PressTheButton.Migrations
 
                     b.HasKey("QuestionId");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("PressTheButton.Models.UserResponse", b =>
@@ -260,7 +263,7 @@ namespace PressTheButton.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("UserResponses", (string)null);
+                    b.ToTable("UserResponses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
