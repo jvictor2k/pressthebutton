@@ -8,8 +8,11 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var smtpStrings = builder.Configuration["SmtpStrings"];
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
