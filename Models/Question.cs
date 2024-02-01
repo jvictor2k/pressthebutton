@@ -13,6 +13,12 @@ namespace PressTheButton.Models
 
         public string Negative {  get; set; }
 
+        public string CreatedBy { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public bool Ativo {  get; set; }
+
         public List<UserResponse> UserResponses { get; set; }
     }
 }

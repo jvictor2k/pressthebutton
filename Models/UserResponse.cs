@@ -16,5 +16,7 @@ namespace PressTheButton.Models
         public bool YesOrNo { get; set; }
 
         public string UserIdentifier { get; set; }
+
+        public string UserId { get; set; }
     }
 }

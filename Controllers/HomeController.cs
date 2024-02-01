@@ -4,6 +4,7 @@ using System.Diagnostics;
 using PressTheButton.Context;
 using Microsoft.EntityFrameworkCore;
 using PressTheButton.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace PressTheButton.Controllers
 {
@@ -11,11 +12,13 @@ namespace PressTheButton.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly AppDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, AppDbContext context)
+        public HomeController(ILogger<HomeController> logger, AppDbContext context, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -34,11 +37,24 @@ namespace PressTheButton.Controllers
 
         private Question GetRandomQuestion()
         {
-            string userIdentifier = GetUserIdentifier();
+            var unansweredQuestions = new List<Question>();
 
-            var unansweredQuestions = _context.Questions
+            if (User.Identity.IsAuthenticated)
+            {
+                string userId = _userManager.GetUserId(User);
+
+                unansweredQuestions = _context.Questions
+                .Where(q => !q.UserResponses.Any(ur => ur.UserId == userId))
+                .ToList();
+            }
+            else
+            {
+                string userIdentifier = GetUserIdentifier();
+
+                unansweredQuestions = _context.Questions
                 .Where(q => !q.UserResponses.Any(ur => ur.UserIdentifier == userIdentifier))
                 .ToList();
+            }
 
             int totalUnansweredQuestions = unansweredQuestions.Count();
 
@@ -53,20 +69,6 @@ namespace PressTheButton.Controllers
             {
                 return null;
             }
-
-            //int totalQuestions = _context.Questions.Count();
-
-            //if (totalQuestions > 0)
-            //{
-            //    Random random = new Random();
-            //    int randomIndex = random.Next(totalQuestions);
-            //
-            //    return _context.Questions.Skip(randomIndex).FirstOrDefault();
-            //}
-            //else
-            //{
-            //    return null;
-            //}
         }
 
         [HttpPost]
@@ -75,9 +77,17 @@ namespace PressTheButton.Controllers
             var userResponse = new UserResponse
             {
                 QuestionId = questionId,
-                YesOrNo = true,
-                UserIdentifier = GetUserIdentifier()
+                YesOrNo = true
             };
+
+            if (User.Identity.IsAuthenticated)
+            {
+                userResponse.UserId = _userManager.GetUserId(User);
+            }
+            else
+            {
+                userResponse.UserIdentifier = GetUserIdentifier();
+            }
 
             _context.UserResponses.Add(userResponse);
             _context.SaveChanges();
@@ -91,9 +101,17 @@ namespace PressTheButton.Controllers
             var userResponse = new UserResponse
             {
                 QuestionId = questionId,
-                YesOrNo = false,
-                UserIdentifier = GetUserIdentifier()
+                YesOrNo = false
             };
+
+            if (User.Identity.IsAuthenticated)
+            {
+                userResponse.UserId = _userManager.GetUserId(User);
+            }
+            else
+            {
+                userResponse.UserIdentifier = GetUserIdentifier();
+            }
 
             _context.UserResponses.Add(userResponse);
             _context.SaveChanges();

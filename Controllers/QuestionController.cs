@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PressTheButton.Context;
@@ -10,15 +11,19 @@ namespace PressTheButton.Controllers
     public class QuestionController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public QuestionController(AppDbContext context)
+        public QuestionController(AppDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
-            var questions = await _context.Questions.ToListAsync();
+            var userId = _userManager.GetUserId(User);
+
+            var questions = await _context.Questions.Where(q => q.CreatedBy == userId).ToListAsync();
             return View(questions);
         }
 
@@ -30,7 +35,15 @@ namespace PressTheButton.Controllers
 
                 if(question != null)
                 {
-                    return View(question);
+                    var userId = _userManager.GetUserId(User);
+                    if(question.CreatedBy == userId)
+                    {
+                        return View(question);
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
                 }
                 else
                 {
@@ -58,6 +71,9 @@ namespace PressTheButton.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    question.CreatedBy = _userManager.GetUserId(User);
+                    question.Date = DateTime.Now;
+                    question.Ativo = true;
                     _context.Add(question);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -81,7 +97,15 @@ namespace PressTheButton.Controllers
 
                 if(question != null)
                 {
-                    return View(question);
+                    var userId = _userManager.GetUserId(User);
+                    if(question.CreatedBy == userId)
+                    {
+                        return View(question);
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
                 }
                 else
                 {
