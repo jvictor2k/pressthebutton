@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PressTheButton.Context;
 using PressTheButton.Models;
+using PressTheButton.ViewModels;
 
 namespace PressTheButton.Controllers
 {
@@ -190,6 +191,30 @@ namespace PressTheButton.Controllers
             _context.Questions.Remove(question);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public IActionResult AllResponses()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            if(userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var questionsWithResponses = _context.Questions
+            .Where(q => q.UserResponses.Any(ur => ur.UserId == userId))
+            .Select(q => new QuestionUserResponseViewModel
+            {
+                QuestionId = q.QuestionId,
+                Text = q.Text,
+                Negative = q.Negative,
+                YesOrNo = q.UserResponses.FirstOrDefault(ur => ur.UserId == userId).YesOrNo
+            })
+            .ToList();
+
+            return View(questionsWithResponses);
         }
 
         private bool QuestionExists(int id)
