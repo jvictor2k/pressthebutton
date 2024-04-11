@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Azure.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PressTheButton.ViewModels;
 using System.Configuration;
@@ -149,11 +150,12 @@ namespace PressTheButton.Controllers
 
                 if (user.EmailConfirmed)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(
-                    model.Email, model.Password, model.RememberMe, false);
+                    var result = await _signInManager.CheckPasswordSignInAsync(
+                    user, model.Password, false);
 
                     if (result.Succeeded)
                     {
+                        await _signInManager.SignInAsync(user, false);
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -165,6 +167,37 @@ namespace PressTheButton.Controllers
                 ModelState.AddModelError(string.Empty, "Dados de Login inválidos");
             }
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditAccount()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return View("Login");
+            }
+
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAccount(string id, string newUserName)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return View("Login");
+            }
+
+            user.UserName = newUserName;
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("EditAccount");
+            }
+
+            return View("Error");
         }
 
         [HttpPost]

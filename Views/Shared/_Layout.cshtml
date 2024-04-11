@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PressTheButton</title>
+    <title>PressTheButton</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PressTheButton.styles.css" asp-append-version="true" />
@@ -34,8 +34,13 @@
                         <li>
                             <a class="nav-link text-dark" asp-area="" asp-controller="Question" asp-action="AllResponses">Suas Escolhas</a>
                         </li>
+                        <li>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="EditAccount">Conta</a>
+                        </li>
                     </ul>
-                    <partial name="_LoginPartial.cshtml" />
+                    <ul class="navbar-nav flex-grow-1">
+                        <partial name="_LoginPartial.cshtml" />
+                    </ul>
                 </div>
             </div>
         </nav>

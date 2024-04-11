@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IdentityUser
+
+<h2>Perfil</h2>
+
+<p>Nome de Usuário: @Model.UserName</p>
+
+<h3>Editar Perfil</h3>
+<form asp-action="EditAccount" asp-route-id="@Model.Id" method="post">
+    <div class="form-group">
+        <label for="newUserName">Novo Nome de Usuário:</label>
+        <input type="text" id="newUserName" name="newUserName" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
