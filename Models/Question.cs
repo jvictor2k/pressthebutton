@@ -20,5 +20,6 @@ namespace PressTheButton.Models
         public bool Ativo {  get; set; }
 
         public List<UserResponse> UserResponses { get; set; }
+        public List<Comment> Comments { get; set; }
     }
 }

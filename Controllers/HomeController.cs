@@ -137,6 +137,7 @@ namespace PressTheButton.Controllers
         {
             var question = _context.Questions
             .Include(q => q.UserResponses)
+            .Include(q => q.Comments)
             .FirstOrDefault(q => q.QuestionId == questionId);
 
             if (question == null)

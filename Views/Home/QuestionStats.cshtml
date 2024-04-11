@@ -8,6 +8,19 @@
     </div>
 </div>
 
+<div class="container">
+    <div class="row">
+        <b class="col-sm-6 text-start text-success">@Model.YesPercentage.ToString("0.00")%</b>
+        <b class="col-sm-6 text-end text-danger">@Model.NoPercentage.ToString("0.00")%</b>
+    </div>
+</div>
+
+<div class="progress">
+    <div id="trueProgress" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: @Model.YesPercentage.ToString("0")%;" aria-valuemin="0" aria-valuemax="100"></div>
+    <div id="falseProgress" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: @Model.NoPercentage.ToString("0")%;" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+
+
 <p class="mt-5 text-center text-primary">Total de respostas: @Model.TotalResponses</p>
 
 <p class="text-center text-success">Apertaram o botão: @Model.YesPercentage.ToString("0.00")%</p>
@@ -15,5 +28,43 @@
 <p class="mb-5 text-center text-danger">Não apertaram o botão: @Model.NoPercentage.ToString("0.00")%</p>
 
 <div class="text-center">
-    <a asp-action="Index" class="btn btn-primary mt-3">Próximo</a>
+    <form id="commentForm" asp-controller="Question" asp-action="MakeComment" asp-route-questionId="@Model.Question.QuestionId" method="post">
+        <div class="form-group">
+            <textarea placeholder="Comentar..." class="form-control" id="commentText" name="text" rows="1" style="resize: none"></textarea>
+            <button type="submit" class="btn btn-primary mt-3">Comentar</button>
+        </div>
+    </form>
 </div>
+
+<b class="mt-3">@Model.Question.Comments.Count Comments</b>
+
+<div>
+    @if (Model.Question.Comments != null && Model.Question.Comments.Any())
+    {
+        <div class="container mt-4">
+            @foreach (Comment comment in Model.Question.Comments)
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@comment.CreatedBy</h5>
+                        <p class="card-text">@comment.Text</p>
+                        <p class="card-text"><small class="text-muted">@comment.Date.ToString("dd/MM/yyyy HH:mm")</small></p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<div class="text-center">
+    <a asp-action="Index" class="btn btn-primary mt-3 mb-3">Próximo</a>
+</div>
+
+<script>
+    document.getElementById('commentText').addEventListener('keydown', function (event) {
+        if (event.keyCode === 13 && !event.shiftKey) {
+            event.preventDefault();
+            document.getElementById('commentForm').submit();
+        }
+    });
+</script>

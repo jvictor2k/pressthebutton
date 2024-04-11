@@ -122,7 +122,7 @@ namespace PressTheButton.Controllers
         //POST method Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Question question)
+        public async Task<IActionResult> Edit(int id, [Bind("QuestionId, Text, Negative")]Question question)
         {
             if(id != question.QuestionId)
             {
@@ -134,7 +134,13 @@ namespace PressTheButton.Controllers
                 {
                     try
                     {
-                        _context.Update(question);
+                        var originalQuestion = await _context.Questions.FindAsync(id);
+
+                        question.Ativo = originalQuestion.Ativo;
+                        question.CreatedBy = originalQuestion.CreatedBy;
+                        question.Date = DateTime.Now;
+
+                        _context.Entry(originalQuestion).CurrentValues.SetValues(question);
                         await _context.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)
@@ -215,6 +221,31 @@ namespace PressTheButton.Controllers
             .ToList();
 
             return View(questionsWithResponses);
+        }
+
+        [HttpPost]
+        public IActionResult MakeComment(int questionId, string text)
+        {
+            var question = _context.Questions.FirstOrDefault(q => q.QuestionId == questionId);
+            if (question == null)
+            {
+                return NotFound();
+            }
+
+            var comment = new Comment
+            {
+                Text = text,
+                CreatedBy = _userManager.GetUserName(User),
+                Date = DateTime.Now,
+                QuestionId = questionId
+            };
+
+            question.Comments ??= new List<Comment>();
+            question.Comments.Add(comment);
+
+            _context.SaveChanges();
+
+            return RedirectToAction("QuestionStats", "Home", new {questionId = questionId});
         }
 
         private bool QuestionExists(int id)
