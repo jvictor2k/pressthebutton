@@ -1,10 +1,24 @@
 ﻿@model PressTheButton.ViewModels.QuestionStatsViewModel
 
 <div class="container">
-    <div class="row">
-        <h2 class="mt-5 text-center">@Html.DisplayFor(model => model.Question.Text)</h2>
-        <h2 class="text-center">Mas...</h2>
-        <h2 class="mb-5 text-center">@Html.DisplayFor(model => model.Question.Negative)</h2>
+    <div class="row justify-content-center align-items-center">
+        <div class="card border-primary text-center mt-3 w-auto h-auto">
+            <div class="card-body">
+                <div class="card-text" style="font-size: 26px;">@Html.DisplayFor(model => model.Question.Text)</div>
+            </div>
+        </div>
+
+        <div class="text-center text-primary mt-3" style="font-size: 26px;"><strong>Mas...</strong></div>
+
+        <div class="card border-primary text-center mt-3 w-auto h-auto">
+            <div class="card-body">
+                <div class="card-text" style="font-size: 26px;">@Html.DisplayFor(model => model.Question.Negative)</div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a asp-action="Index" class="btn btn-lg btn-primary mt-4 mb-4"><strong>PRÓXIMO</strong></a>
+        </div>
     </div>
 </div>
 
@@ -36,7 +50,18 @@
     </form>
 </div>
 
-<b class="mt-3">@Model.Question.Comments.Count Comments</b>
+@{
+    int commentsCount = Model.Question.Comments.Count;
+}
+
+@if(commentsCount > 0)
+{
+    <b class="mt-3">@Model.Question.Comments.Count Comments</b>
+}
+else
+{
+    <b class="mt-3">Seja o primeiro a comentar</b>
+}
 
 <div>
     @if (Model.Question.Comments != null && Model.Question.Comments.Any())
@@ -54,10 +79,6 @@
             }
         </div>
     }
-</div>
-
-<div class="text-center">
-    <a asp-action="Index" class="btn btn-primary mt-3 mb-3">Próximo</a>
 </div>
 
 <script>

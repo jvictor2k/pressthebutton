@@ -10,31 +10,43 @@
         justify-content: center;
         align-items: center;
     }
+
+    .brilho:hover {
+        filter: brightness(80%);
+        transition: filter 0.5s ease;
+    }
 </style>
 
 <div class="container">
-    <div class="row">
+    <div class="row justify-content-center align-items-center">
         <h2 class="mt-5 text-primary text-center">
-            Você vai apertar o botão?
+            <strong>VOCÊ VAI APERTAR O BOTÃO?</strong>
         </h2>
-        <p class="mt-5 text-center">@Html.DisplayFor(model => model.Text)</p>
-        <p class="text-center">Mas...</p>
-        <p class="mb-5 text-center">@Html.DisplayFor(model => model.Negative)</p>
+
+        <div class="center-outer mt-3 mb-3">
+            <form asp-controller="Home" asp-action="ApertarBotao" asp-route-questionId="@Model.QuestionId" method="post">
+                <button type="submit" class="btn img-fluid">
+                    <img src="~/images/button.png" width="150" class="brilho" />
+                </button>
+            </form>
+        </div>
+
+        <div class="card border-primary text-center mt-3 w-auto h-auto">
+            <div class="card-body">
+                <div class="card-text">@Html.DisplayFor(model => model.Text)</div>
+            </div>
+        </div>
+        <p class="text-primary text-center mt-3"><strong>Mas...</strong></p>
+        <div class="card border-primary text-center mb-3 mx-3 w-auto h-auto">
+            <div class="card-body">
+                <div class="card-text">@Html.DisplayFor(model => model.Negative)</div>
+            </div>
+        </div>
+
+        <div class="center-outer mt-3 mb-3">
+            <form asp-controller="Home" asp-action="NaoApertarBotao" asp-route-questionId="@Model.QuestionId" method="post">
+                <button type="submit" class="btn btn-lg btn-danger"><strong>NÃO APERTAR</strong></button>
+            </form>
+        </div>
     </div>
-</div>
-
-<div class="center-outer">
-    <form method="post" action="@Url.Action("ApertarBotao", "Home")">
-        <input type="hidden" name="QuestionId" asp-for="QuestionId" />
-        <button type="submit" class="btn img-fluid">
-            <img src="~/images/button.png" width="150" />
-        </button>
-    </form>
-</div>
-
-<div class="center-outer mt-5 mb-5">
-    <form method="post" action="@Url.Action("NaoApertarBotao", "Home")">
-        <input type="hidden" name="QuestionId" asp-for="QuestionId" />
-        <button type="submit" class="btn btn-danger">Não apertar</button>
-    </form>
 </div>
