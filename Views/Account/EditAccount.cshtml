@@ -1,15 +1,24 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @model IdentityUser
 
-<h2>Perfil</h2>
-
-<p>Nome de Usuário: @Model.UserName</p>
-
-<h3>Editar Perfil</h3>
-<form asp-action="EditAccount" asp-route-id="@Model.Id" method="post">
-    <div class="form-group">
-        <label for="newUserName">Novo Nome de Usuário:</label>
-        <input type="text" id="newUserName" name="newUserName" class="form-control" />
+<div class="container">
+    <div class="row justify-content-center align-items-center text-center">
+        <div class="col-md-12">
+            <h1 class="mt-5 mb-4">Perfil</h1>
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="card-text">
+                        <h4>Username: <b>@Model.UserName</b></h4>
+                    </div>
+                </div>
+            </div>
+            <form asp-action="EditAccount" asp-route-id="@Model.Id" method="post" class="mt-4">
+                <label for="newUserName" class="mb-3">Novo Username:</label>
+                <div class="form-group d-flex justify-content-center align-items-center">
+                    <input type="text" id="newUserName" name="newUserName" class="form-control" style="max-width: 18rem;" />
+                </div>
+                <button type="submit" class="btn btn-lg btn-primary mt-3">Salvar</button>
+            </form>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Salvar</button>
-</form>
+</div>
