@@ -133,7 +133,7 @@ namespace PressTheButton.Controllers
             }
         }
 
-        public IActionResult QuestionStats(int questionId)
+        public async Task<IActionResult> QuestionStats(int questionId)
         {
             var question = _context.Questions
             .Include(q => q.UserResponses)
@@ -149,12 +149,29 @@ namespace PressTheButton.Controllers
             var yesResponses = question.UserResponses.Count(ur => ur.YesOrNo == true);
             var noResponses = totalResponses - yesResponses;
 
+            var commentsWithUserNames = new List<(Comment comment, string userName)>();
+
+            foreach (var comment in question.Comments)
+            {
+                var user = await _userManager.FindByIdAsync(comment.CreatedBy);
+                if(user != null)
+                {
+                    string userName = user.UserName;
+                    commentsWithUserNames.Add((comment, userName));
+                }
+                else
+                {
+                    commentsWithUserNames.Add((comment, "Anônimo"));
+                }
+            }
+
             var viewModel = new QuestionStatsViewModel
             {
                 Question = question,
                 TotalResponses = totalResponses,
                 YesPercentage = totalResponses > 0 ? (yesResponses / (double)totalResponses) * 100 : 0,
-                NoPercentage = totalResponses > 0 ? (noResponses / (double)totalResponses) * 100 : 0
+                NoPercentage = totalResponses > 0 ? (noResponses / (double)totalResponses) * 100 : 0,
+                CommentsWithUserNames = commentsWithUserNames
             };
 
             return View("QuestionStats", viewModel);

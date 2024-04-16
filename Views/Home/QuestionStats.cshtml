@@ -64,14 +64,14 @@ else
 }
 
 <div>
-    @if (Model.Question.Comments != null && Model.Question.Comments.Any())
+    @if (Model.CommentsWithUserNames != null && Model.CommentsWithUserNames.Any())
     {
         <div class="container mt-4">
-            @foreach (Comment comment in Model.Question.Comments)
+            @foreach (var (comment, userName) in Model.CommentsWithUserNames)
             {
-                <div class="card mb-3">
+                <div class="card border-primary mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">@comment.CreatedBy</h5>
+                        <h5 class="card-title">@userName</h5>
                         <p class="card-text">@comment.Text</p>
                         <p class="card-text"><small class="text-muted">@comment.Date.ToString("dd/MM/yyyy HH:mm")</small></p>
                     </div>

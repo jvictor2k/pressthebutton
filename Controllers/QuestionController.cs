@@ -235,7 +235,7 @@ namespace PressTheButton.Controllers
             var comment = new Comment
             {
                 Text = text,
-                CreatedBy = _userManager.GetUserName(User),
+                CreatedBy = _userManager.GetUserId(User),
                 Date = DateTime.Now,
                 QuestionId = questionId
             };
