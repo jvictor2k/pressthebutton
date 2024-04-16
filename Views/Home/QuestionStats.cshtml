@@ -2,7 +2,7 @@
 
 <div class="container">
     <div class="row justify-content-center align-items-center">
-        <div class="card border-primary text-center mt-3 w-auto h-auto">
+        <div class="card border-primary shadow text-center mt-3 w-auto h-auto">
             <div class="card-body">
                 <div class="card-text" style="font-size: 26px;">@Html.DisplayFor(model => model.Question.Text)</div>
             </div>
@@ -10,7 +10,7 @@
 
         <div class="text-center text-primary mt-3" style="font-size: 26px;"><strong>Mas...</strong></div>
 
-        <div class="card border-primary text-center mt-3 w-auto h-auto">
+        <div class="card border-primary shadow text-center mt-3 w-auto h-auto">
             <div class="card-body">
                 <div class="card-text" style="font-size: 26px;">@Html.DisplayFor(model => model.Question.Negative)</div>
             </div>
@@ -69,7 +69,7 @@ else
         <div class="container mt-4">
             @foreach (var (comment, userName) in Model.CommentsWithUserNames)
             {
-                <div class="card border-primary mb-3">
+                <div class="card border-primary shadow mb-3">
                     <div class="card-body">
                         <h5 class="card-title">@userName</h5>
                         <p class="card-text">@comment.Text</p>
