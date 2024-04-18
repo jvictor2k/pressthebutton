@@ -50,18 +50,7 @@
     </form>
 </div>
 
-@{
-    int commentsCount = Model.Question.Comments.Count;
-}
-
-@if(commentsCount > 0)
-{
-    <b class="mt-3">@Model.Question.Comments.Count Comments</b>
-}
-else
-{
-    <b class="mt-3">Seja o primeiro a comentar</b>
-}
+@await Component.InvokeAsync("Counter",Model.CommentsWithUserNames.Count())
 
 <div>
     @if (Model.CommentsWithUserNames != null && Model.CommentsWithUserNames.Any())
