@@ -1,4 +1,5 @@
 ﻿using Azure.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PressTheButton.ViewModels;
@@ -170,6 +171,7 @@ namespace PressTheButton.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> EditAccount()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -182,6 +184,7 @@ namespace PressTheButton.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> EditAccount(string id, string newUserName)
         {
             var user = await _userManager.FindByIdAsync(id);

@@ -13,5 +13,6 @@ namespace PressTheButton.Context
 
         public DbSet<UserResponse> UserResponses { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Reply> Replys { get; set; }
     }
 }

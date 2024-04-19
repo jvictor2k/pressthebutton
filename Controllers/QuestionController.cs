@@ -248,6 +248,32 @@ namespace PressTheButton.Controllers
             return RedirectToAction("QuestionStats", "Home", new {questionId = questionId});
         }
 
+        [HttpPost]
+        public IActionResult MakeReply(int commentId, string text, int questionId)
+        {
+            var comment = _context.Comments.FirstOrDefault();
+
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            var reply = new Reply
+            {
+                Text = text,
+                CreatedBy = _userManager.GetUserId(User),
+                Date = DateTime.Now,
+                CommentId = commentId
+            };
+
+            comment.Replys ??= new List<Reply> { reply };
+            comment.Replys.Add(reply);
+
+            _context.SaveChanges();
+
+            return RedirectToAction("QuestionStats", "Home", new { questionId = questionId });
+        }
+
         private bool QuestionExists(int id)
         {
             return _context.Questions.Any(q => q.QuestionId == id);
