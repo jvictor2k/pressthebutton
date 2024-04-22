@@ -251,7 +251,7 @@ namespace PressTheButton.Controllers
         [HttpPost]
         public IActionResult MakeReply(int commentId, string text, int questionId)
         {
-            var comment = _context.Comments.FirstOrDefault();
+            var comment = _context.Comments.FirstOrDefault(c => c.CommentId == commentId);
 
             if (comment == null)
             {

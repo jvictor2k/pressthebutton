@@ -1,0 +1,42 @@
+﻿@model Tuple<Comment, string>
+
+@*
+    Item1 == comment
+    Item2 == userName
+*@
+
+<div class="card border-primary shadow mb-3">
+    <div class="card-body">
+        <p class="card-title"><strong class="me-3">@Model.Item2</strong><small class="text-muted">@Model.Item1.Date.ToString("dd/MM/yyyy HH:mm")</small></p>
+        <p class="card-text">@Model.Item1.Text</p>
+        <button class="btn btn-responder btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#replyCollapse_@Model.Item1.CommentId" aria-expanded="false" aria-controls="replyCollapse">
+            Responder
+        </button>
+        <div class="collapse" id="replyCollapse_@Model.Item1.CommentId">
+            <div class="text-center mt-3">
+                <form id="replyForm_@Model.Item1.CommentId" asp-controller="Question" asp-action="MakeReply"
+                asp-route-questionId="@Model.Item1.QuestionId" asp-route-commentId="@Model.Item1.CommentId" method="post">
+                    <div class="form-group">
+                        <textarea placeholder="Responder..." class="form-control replyText" id="replyText_@Model.Item1.CommentId" name="text" rows="1" style="resize: none"></textarea>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-outline-secondary mt-3" data-bs-toggle="collapse" data-bs-target="#replyCollapse_@Model.Item1.CommentId" aria-expanded="false" aria-controls="replyCollapse">Cancelar</button>
+                            <button type="submit" class="btn btn-primary mt-3">Responder</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.replyText').forEach(function (textarea) {
+        textarea.addEventListener('keydown', function (event) {
+            if (event.keyCode === 13 && !event.shiftKey) {
+                event.preventDefault();
+                var form = this.closest('form');
+                form.submit();
+            }
+        });
+    });
+</script>

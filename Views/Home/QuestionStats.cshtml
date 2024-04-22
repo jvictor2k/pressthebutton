@@ -40,7 +40,6 @@
 <p class="text-center text-success">Apertaram o botão: @Model.YesPercentage.ToString("0.00")%</p>
 
 <p class="mb-5 text-center text-danger">Não apertaram o botão: @Model.NoPercentage.ToString("0.00")%</p>
-
 <div class="text-center">
     <form id="commentForm" asp-controller="Question" asp-action="MakeComment" asp-route-questionId="@Model.Question.QuestionId" method="post">
         <div class="form-group">
@@ -58,13 +57,7 @@
         <div class="container mt-4">
             @foreach (var (comment, userName) in Model.CommentsWithUserNames)
             {
-                <div class="card border-primary shadow mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">@userName</h5>
-                        <p class="card-text">@comment.Text</p>
-                        <p class="card-text"><small class="text-muted">@comment.Date.ToString("dd/MM/yyyy HH:mm")</small></p>
-                    </div>
-                </div>
+                @await Html.PartialAsync("_CommentPartial", new Tuple<Comment, string>(comment, userName))
             }
         </div>
     }
@@ -77,4 +70,18 @@
             document.getElementById('commentForm').submit();
         }
     });
+
+    let collapses = document.querySelectorAll('[id^="replyCollapse_"]');
+    let btns = document.querySelectorAll(".btn-responder")
+    btns.forEach((item) => {
+        item.addEventListener('click', () => {
+            closeAllCollapses(collapses)
+        })
+    })
+
+    function closeAllCollapses(collapses) {
+        collapses.forEach((item) => {
+            item.classList.remove('show')
+        })
+    }
 </script>
