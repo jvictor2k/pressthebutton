@@ -49,7 +49,7 @@
     </form>
 </div>
 
-@await Component.InvokeAsync("Counter", Model.CommentsWithUserNames.Count())
+@await Component.InvokeAsync("Counter", Model.CommentsWithUserNames.Count() + Model.ReplysWithUserNames.Count())
 
 <div>
     @if (Model.CommentsWithUserNames != null && Model.CommentsWithUserNames.Any())
