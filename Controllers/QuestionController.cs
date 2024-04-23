@@ -263,7 +263,8 @@ namespace PressTheButton.Controllers
                 Text = text,
                 CreatedBy = _userManager.GetUserId(User),
                 Date = DateTime.Now,
-                CommentId = commentId
+                CommentId = commentId,
+                QuestionId = questionId
             };
 
             comment.Replys ??= new List<Reply> { reply };

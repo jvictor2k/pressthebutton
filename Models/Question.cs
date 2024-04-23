@@ -21,5 +21,6 @@ namespace PressTheButton.Models
 
         public List<UserResponse> UserResponses { get; set; }
         public List<Comment> Comments { get; set; }
+        public List<Reply> Replys { get; set; }
     }
 }

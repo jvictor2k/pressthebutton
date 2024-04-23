@@ -9,5 +9,6 @@ namespace PressTheButton.ViewModels
         public double YesPercentage { get; set; }
         public double NoPercentage { get; set; }
         public List<(Comment, string)> CommentsWithUserNames { get; set; }
+        public List<(Reply, string)> ReplysWithUserNames { get; set; }
     }
 }

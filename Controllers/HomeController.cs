@@ -138,6 +138,7 @@ namespace PressTheButton.Controllers
             var question = _context.Questions
             .Include(q => q.UserResponses)
             .Include(q => q.Comments)
+            .Include(q => q.Replys)
             .FirstOrDefault(q => q.QuestionId == questionId);
 
             if (question == null)
@@ -150,6 +151,8 @@ namespace PressTheButton.Controllers
             var noResponses = totalResponses - yesResponses;
 
             var commentsWithUserNames = new List<(Comment comment, string userName)>();
+
+            var replysWithUserNames = new List<(Reply reply, string userName)>();
 
             foreach (var comment in question.Comments)
             {
@@ -165,13 +168,28 @@ namespace PressTheButton.Controllers
                 }
             }
 
+            foreach (Reply reply in question.Replys)
+            {
+                var replyUser = await _userManager.FindByIdAsync(reply.CreatedBy);
+                if (replyUser != null)
+                {
+                    string replyUserName = replyUser.UserName;
+                    replysWithUserNames.Add((reply, replyUserName));
+                }
+                else
+                {
+                    replysWithUserNames.Add((reply, "Anônimo"));
+                }
+            }
+
             var viewModel = new QuestionStatsViewModel
             {
                 Question = question,
                 TotalResponses = totalResponses,
                 YesPercentage = totalResponses > 0 ? (yesResponses / (double)totalResponses) * 100 : 0,
                 NoPercentage = totalResponses > 0 ? (noResponses / (double)totalResponses) * 100 : 0,
-                CommentsWithUserNames = commentsWithUserNames
+                CommentsWithUserNames = commentsWithUserNames,
+                ReplysWithUserNames = replysWithUserNames
             };
 
             return View("QuestionStats", viewModel);

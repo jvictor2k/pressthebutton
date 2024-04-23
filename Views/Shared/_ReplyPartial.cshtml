@@ -1,0 +1,13 @@
+﻿@model Tuple<Reply, string>
+
+@*
+    Item1 = reply
+    Item2 = userName
+*@
+
+<div class="card border-1 border-primary bg-info bg-opacity-10 shadow-sm mb-2">
+    <div class="card-body">
+        <p class="card-title"><strong class="me-3">@Model.Item2</strong><small class="text-muted">@Model.Item1.Date.ToString("dd/MM/yyyy HH:mm")</small></p>
+        <p class="card-text">@Model.Item1.Text</p>
+    </div>
+</div>
