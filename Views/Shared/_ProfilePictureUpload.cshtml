@@ -1,0 +1,12 @@
+﻿@model PressTheButton.Models.ProfilePicture
+
+<form asp-controller="Account" asp-action="NewProfilePicture" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Path" class="control-label"></label>
+        <input type="file" name="profilePicture" />
+        <span asp-validation-for="Path" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Salvar" class="btn btn-primary" />
+    </div>
+</form>

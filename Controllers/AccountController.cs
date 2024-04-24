@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PressTheButton.Context;
+using PressTheButton.Models;
 using PressTheButton.ViewModels;
 using System.Configuration;
 using System.Net;
@@ -14,12 +16,16 @@ namespace PressTheButton.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _config;
+        private string _filePath;
+        private readonly AppDbContext _context;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config, IWebHostEnvironment env, AppDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
+            _filePath = env.WebRootPath;
+            _context = context;
         }
 
         [HttpGet]
@@ -202,6 +208,77 @@ namespace PressTheButton.Controllers
 
             return View("Error");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> NewProfilePicture(IFormFile profilePicture)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if(user == null)
+            {
+                return View("Login");
+            }
+
+            if(ModelState.IsValid)
+            {
+                if(!ImageIsValid(profilePicture))
+                {
+                    return View("Error");
+                }
+
+                var name = await SaveFile(profilePicture);
+
+                ProfilePicture newProfilePicture = new ProfilePicture
+                {
+                    UserId = user.Id,
+                    Path = name
+                };
+
+                _context.Add(newProfilePicture);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("EditAccount");
+            }
+            return View("Index");
+        }
+
+        public bool ImageIsValid(IFormFile profilePicture)
+        {
+            switch (profilePicture.ContentType)
+            {
+                case "image/jpeg":
+                    return true;
+                case "image/bmp":
+                    return true;
+                case "image/gif":
+                    return true;
+                case "image/png":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public async Task<string> SaveFile(IFormFile profilePicture)
+        {
+            var name = Guid.NewGuid().ToString() + Path.GetExtension(profilePicture.FileName);
+            var filePath = Path.Combine(_filePath, "profilePicture");
+
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+
+            var fullPath = Path.Combine(filePath, name);
+
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await profilePicture.CopyToAsync(stream);
+            }
+
+            return name;
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Logout()
