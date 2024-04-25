@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PressTheButton.Context;
 using PressTheButton.Models;
 using PressTheButton.ViewModels;
@@ -186,6 +187,19 @@ namespace PressTheButton.Controllers
                 return View("Login");
             }
 
+            var profilePicture = await _context.ProfilePictures.FirstOrDefaultAsync(p => p.UserId == user.Id);
+
+            var filePath = Path.Combine(_filePath, "images", "profilePicture", profilePicture.Path);
+
+            if (profilePicture == null || !System.IO.File.Exists(filePath))
+            {
+                ViewBag.ProfilePicturePath = "profile.jpg";
+            }
+            else
+            {
+                ViewBag.ProfilePicturePath = profilePicture.Path;
+            }
+
             return View(user);
         }
 
@@ -226,24 +240,47 @@ namespace PressTheButton.Controllers
                     return View("Error");
                 }
 
-                var name = await SaveFile(profilePicture);
+                var userWithPicture = await _context.ProfilePictures.FirstOrDefaultAsync(p => p.UserId == user.Id);
 
-                ProfilePicture newProfilePicture = new ProfilePicture
+                if(userWithPicture == null)
                 {
-                    UserId = user.Id,
-                    Path = name
-                };
+                    var name = await SaveFile(profilePicture);
 
-                _context.Add(newProfilePicture);
-                await _context.SaveChangesAsync();
+                    ProfilePicture newProfilePicture = new ProfilePicture
+                    {
+                        UserId = user.Id,
+                        Path = name
+                    };
 
-                return RedirectToAction("EditAccount");
+                    _context.Add(newProfilePicture);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction("EditAccount");
+                }
+                else
+                {
+                    DeleteFile(userWithPicture.Path);
+
+                    var name = await SaveFile(profilePicture);
+
+                    userWithPicture.Path = name;
+
+                    _context.Update(userWithPicture);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction("EditAccount");
+                }
             }
             return View("Index");
         }
 
         public bool ImageIsValid(IFormFile profilePicture)
         {
+            if (profilePicture == null || profilePicture.Length == 0)
+            {
+                return false;
+            }
+
             switch (profilePicture.ContentType)
             {
                 case "image/jpeg":
@@ -262,7 +299,7 @@ namespace PressTheButton.Controllers
         public async Task<string> SaveFile(IFormFile profilePicture)
         {
             var name = Guid.NewGuid().ToString() + Path.GetExtension(profilePicture.FileName);
-            var filePath = Path.Combine(_filePath, "profilePicture");
+            var filePath = Path.Combine(_filePath, "images", "profilePicture");
 
             if (!Directory.Exists(filePath))
             {
@@ -279,6 +316,15 @@ namespace PressTheButton.Controllers
             return name;
         }
 
+        private void DeleteFile(string fileName)
+        {
+            var filePath = Path.Combine(_filePath, "images", "profilePicture", fileName);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> Logout()
