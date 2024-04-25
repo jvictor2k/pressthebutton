@@ -189,15 +189,22 @@ namespace PressTheButton.Controllers
 
             var profilePicture = await _context.ProfilePictures.FirstOrDefaultAsync(p => p.UserId == user.Id);
 
-            var filePath = Path.Combine(_filePath, "images", "profilePicture", profilePicture.Path);
-
-            if (profilePicture == null || !System.IO.File.Exists(filePath))
+            if (profilePicture == null || profilePicture.Path == null)
             {
                 ViewBag.ProfilePicturePath = "profile.jpg";
+
+                return View(user);
+            }
+
+            var filePath = Path.Combine(_filePath, "images", "profilePicture", profilePicture.Path);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                ViewBag.ProfilePicturePath = profilePicture.Path;
             }
             else
             {
-                ViewBag.ProfilePicturePath = profilePicture.Path;
+                ViewBag.ProfilePicturePath = "profile.jpg";
             }
 
             return View(user);
@@ -228,21 +235,21 @@ namespace PressTheButton.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
-            if(user == null)
+            if (user == null)
             {
                 return View("Login");
             }
 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                if(!ImageIsValid(profilePicture))
+                if (!ImageIsValid(profilePicture))
                 {
                     return View("Error");
                 }
 
                 var userWithPicture = await _context.ProfilePictures.FirstOrDefaultAsync(p => p.UserId == user.Id);
 
-                if(userWithPicture == null)
+                if (userWithPicture == null)
                 {
                     var name = await SaveFile(profilePicture);
 
