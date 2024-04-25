@@ -7,7 +7,17 @@
 
 <div class="card border-1 border-primary bg-info bg-opacity-10 shadow-sm mb-2">
     <div class="card-body">
-        <p class="card-title"><strong class="me-3">@Model.Item2</strong><small class="text-muted">@Model.Item1.Date.ToString("dd/MM/yyyy HH:mm")</small></p>
-        <p class="card-text">@Model.Item1.Text</p>
+        <div class="row">
+            <div class="col-auto">
+                <img src="~/images/profilePicture/@Model.Item1.ProfilePicturePath" class="img-fixed-size-low" />
+            </div>
+            <div class="col-auto">
+                <div class="d-flex justify-content-between">
+                    <p class="card-title me-2 mb-0"><strong>@Model.Item2</strong></p>
+                    <p class="card-title text-muted mb-0">@Model.Item1.Date.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+                <p class="card-text mt-2">@Model.Item1.Text</p>
+            </div>
+        </div>
     </div>
 </div>

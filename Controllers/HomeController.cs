@@ -5,6 +5,7 @@ using PressTheButton.Context;
 using Microsoft.EntityFrameworkCore;
 using PressTheButton.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using PressTheButton.Migrations;
 
 namespace PressTheButton.Controllers
 {
@@ -13,12 +14,14 @@ namespace PressTheButton.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly AppDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private string _filePath;
 
-        public HomeController(ILogger<HomeController> logger, AppDbContext context, UserManager<IdentityUser> userManager)
+        public HomeController(ILogger<HomeController> logger, AppDbContext context, UserManager<IdentityUser> userManager, IWebHostEnvironment env)
         {
             _logger = logger;
             _context = context;
             _userManager = userManager;
+            _filePath = env.WebRootPath;
         }
 
         public IActionResult Index()
@@ -160,10 +163,33 @@ namespace PressTheButton.Controllers
                 if(user != null)
                 {
                     string userName = user.UserName;
-                    commentsWithUserNames.Add((comment, userName));
+
+                    var profilePicture = await _context.ProfilePictures.FirstOrDefaultAsync(p => p.UserId == user.Id);
+
+                    if(profilePicture == null || profilePicture.Path == null)
+                    {
+                        comment.ProfilePicturePath = "profile.jpg";
+                        commentsWithUserNames.Add((comment, userName));
+                    }
+                    else
+                    {
+                        var filePath = Path.Combine(_filePath, "images", "profilePicture", profilePicture.Path);
+
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            comment.ProfilePicturePath = filePath;
+                            commentsWithUserNames.Add((comment, userName));
+                        }
+                        else
+                        {
+                            comment.ProfilePicturePath = "profile.jpg";
+                            commentsWithUserNames.Add((comment, userName));
+                        }
+                    }
                 }
                 else
                 {
+                    comment.ProfilePicturePath = "profile.jpg";
                     commentsWithUserNames.Add((comment, "Anônimo"));
                 }
             }
@@ -174,10 +200,33 @@ namespace PressTheButton.Controllers
                 if (replyUser != null)
                 {
                     string replyUserName = replyUser.UserName;
-                    replysWithUserNames.Add((reply, replyUserName));
+
+                    var profilePicture = await _context.ProfilePictures.FirstOrDefaultAsync(p => p.UserId == replyUser.Id);
+
+                    if(profilePicture == null || profilePicture.Path == null)
+                    {
+                        reply.ProfilePicturePath = "profile.jpg";
+                        replysWithUserNames.Add((reply, replyUserName));
+                    }
+                    else
+                    {
+                        var filePath = Path.Combine(_filePath, "images", "profilePicture", profilePicture.Path);
+
+                        if(System.IO.File.Exists(filePath))
+                        {
+                            reply.ProfilePicturePath = filePath;
+                            replysWithUserNames.Add((reply, replyUserName));
+                        }
+                        else
+                        {
+                            reply.ProfilePicturePath = "profile.jpg";
+                            replysWithUserNames.Add((reply, replyUserName));
+                        }
+                    }
                 }
                 else
                 {
+                    reply.ProfilePicturePath = "profile.jpg";
                     replysWithUserNames.Add((reply, "Anônimo"));
                 }
             }

@@ -13,7 +13,9 @@ namespace PressTheButton.Models
         public DateTime Date { get; set; }
         public int CommentId { get; set; }
         public int QuestionId { get; set; }
+        public string ProfilePicturePath {  get; set; }
         public Comment Comment { get; set; }
         public Question Question { get; set; }
+        public ProfilePicture ProfilePicture { get; set; }
     }
 }

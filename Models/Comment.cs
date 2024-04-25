@@ -12,7 +12,9 @@ namespace PressTheButton.Models
         public string CreatedBy { get; set; }
         public DateTime Date {  get; set; }
         public int QuestionId { get; set; }
+        public string ProfilePicturePath { get; set; }
         public Question Question { get; set; }
+        public ProfilePicture ProfilePicture { get; set; }
         public List<Reply> Replys { get; set; }
     }
 }
