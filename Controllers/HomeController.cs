@@ -177,7 +177,7 @@ namespace PressTheButton.Controllers
 
                         if (System.IO.File.Exists(filePath))
                         {
-                            comment.ProfilePicturePath = filePath;
+                            comment.ProfilePicturePath = profilePicture.Path;
                             commentsWithUserNames.Add((comment, userName));
                         }
                         else
@@ -214,7 +214,7 @@ namespace PressTheButton.Controllers
 
                         if(System.IO.File.Exists(filePath))
                         {
-                            reply.ProfilePicturePath = filePath;
+                            reply.ProfilePicturePath = profilePicture.Path;
                             replysWithUserNames.Add((reply, replyUserName));
                         }
                         else
@@ -231,6 +231,37 @@ namespace PressTheButton.Controllers
                 }
             }
 
+            string profilePicturePath = "";
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                var profilePicture = await _context.ProfilePictures.FirstOrDefaultAsync(p => p.UserId == user.Id);
+
+                if(profilePicture == null || profilePicture.Path == null)
+                {
+                    profilePicturePath = "profile.jpg";
+                }
+                else
+                {
+                    var filePath = Path.Combine(_filePath, "images", "profilePicture", profilePicture.Path);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        profilePicturePath = profilePicture.Path;
+                    }
+                    else
+                    {
+                        profilePicturePath = "profile.jpg";
+                    }
+                }
+            }
+            else
+            {
+                profilePicturePath = "profile.jpg";
+            }
+
             var viewModel = new QuestionStatsViewModel
             {
                 Question = question,
@@ -238,8 +269,11 @@ namespace PressTheButton.Controllers
                 YesPercentage = totalResponses > 0 ? (yesResponses / (double)totalResponses) * 100 : 0,
                 NoPercentage = totalResponses > 0 ? (noResponses / (double)totalResponses) * 100 : 0,
                 CommentsWithUserNames = commentsWithUserNames,
-                ReplysWithUserNames = replysWithUserNames
+                ReplysWithUserNames = replysWithUserNames,
+                ProfilePicturePath = profilePicturePath
             };
+
+            ViewBag.ProfilePicturePath = profilePicturePath;
 
             return View("QuestionStats", viewModel);
         }

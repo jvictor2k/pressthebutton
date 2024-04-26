@@ -40,14 +40,24 @@
 <p class="text-center text-success">Apertaram o botão: @Model.YesPercentage.ToString("0.00")%</p>
 
 <p class="mb-5 text-center text-danger">Não apertaram o botão: @Model.NoPercentage.ToString("0.00")%</p>
-<div class="text-center">
-    <form id="commentForm" asp-controller="Question" asp-action="MakeComment" asp-route-questionId="@Model.Question.QuestionId" method="post">
-        <div class="form-group">
-            <textarea placeholder="Comentar..." class="form-control" id="commentText" name="text" rows="1" style="resize: none"></textarea>
+
+<form id="commentForm" asp-controller="Question" asp-action="MakeComment" asp-route-questionId="@Model.Question.QuestionId" method="post">
+    <div class="row">
+        <div class="col-auto">
+            <img src="~/images/profilePicture/@Model.ProfilePicturePath" class="img-fixed-size-low" />
+        </div>
+        <div class="col">
+            <div class="form-group flex-grow-1">
+                <textarea placeholder="Comentar..." class="form-control" id="commentText" name="text" rows="1" style="resize: none"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center align-items-center">
+        <div class="text-center">
             <button type="submit" class="btn btn-primary mt-3">Comentar</button>
         </div>
-    </form>
-</div>
+    </div>
+</form>
 
 @await Component.InvokeAsync("Counter", Model.CommentsWithUserNames.Count() + Model.ReplysWithUserNames.Count())
 
@@ -60,7 +70,8 @@
                 var commentId = comment.CommentId;
                 var numberOfReplies = Model.ReplysWithUserNames.Count(tuple => tuple.Item1.CommentId == commentId);
 
-                @await Html.PartialAsync("_CommentPartial", new Tuple<Comment, string>(comment, userName));
+                @await Html.PartialAsync("_CommentPartial", new Tuple<Comment, string>(comment, userName))
+                ;
 
                 if (numberOfReplies > 0)
                 {
