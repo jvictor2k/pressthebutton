@@ -85,7 +85,7 @@
                         {
                             if (reply.CommentId == comment.CommentId)
                             {
-                                @await Html.PartialAsync("_ReplyPartial", new Tuple<Reply, string>(reply, userName))
+                                @await Html.PartialAsync("_ReplyPartial", new Tuple<Reply, string>(reply, replyUserName))
                             }
                         }
                     </div>

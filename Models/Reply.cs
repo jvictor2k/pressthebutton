@@ -17,5 +17,6 @@ namespace PressTheButton.Models
         public Comment Comment { get; set; }
         public Question Question { get; set; }
         public ProfilePicture ProfilePicture { get; set; }
+        public List<Rating> Ratings { get; set; }
     }
 }
