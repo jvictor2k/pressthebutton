@@ -15,5 +15,6 @@ namespace PressTheButton.Context
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Reply> Replys { get; set; }
         public DbSet<ProfilePicture> ProfilePictures { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿@model PressTheButton.ViewModels.QuestionStatsViewModel
+﻿@using PressTheButton.Enums
+@model PressTheButton.ViewModels.QuestionStatsViewModel
 
 <div class="container">
     <div class="row justify-content-center align-items-center">
@@ -65,14 +66,15 @@
     @if (Model.CommentsWithUserNames != null && Model.CommentsWithUserNames.Any())
     {
         <div class="container mt-4">
-            @foreach (var (comment, userName) in Model.CommentsWithUserNames)
+            @foreach (var (comment, userName, ratingValue) in Model.CommentsWithUserNames)
             {
                 var commentId = comment.CommentId;
                 var numberOfReplies = Model.ReplysWithUserNames.Count(tuple => tuple.Item1.CommentId == commentId);
 
-                @await Html.PartialAsync("_CommentPartial", new Tuple<Comment, string>(comment, userName))
-                ;
-
+                <div id="comment-@commentId">
+                    @await Html.PartialAsync("_CommentPartial", new Tuple<Comment, string, RatingValue>(comment, userName, ratingValue))
+                </div>
+                
                 if (numberOfReplies > 0)
                 {
                     <button class="btn link-primary" style="text-decoration: none;" type="button" data-bs-toggle="collapse" data-bs-target="#replysCollapse_@comment.CommentId" aria-expanded="false" aria-controls="replysCollapse">
@@ -91,6 +93,111 @@
                     </div>
                 </div>
             }
+
+            <script>
+                function setupRatingButton(commentId) {
+                    let form_like = document.getElementById("like-form-" + commentId);
+                    let like_icon = document.getElementById("like-icon-" + commentId);
+                    let form_dislike = document.getElementById("dislike-form-" + commentId)
+                    let dislike_icon = document.getElementById("dislike-icon-" + commentId)
+
+                    form_like.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        setClick(commentId, 'LikeComment');
+                    });
+
+                    form_dislike.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        setClick(commentId, 'DislikeComment');
+                    });
+
+                    function likeCounterSum(commentId) { 
+                        let like_div = document.getElementById("rating-count-" + commentId);
+                        let text = like_div.textContent;
+                        let num = parseInt(text);
+                        let newNum = num + 1;
+                        like_div.textContent = newNum.toString();
+                    }
+
+                    function likeCounterSub(commentId) {
+                        let like_div = document.getElementById("rating-count-" + commentId);
+                        let text = like_div.textContent;
+                        let num = parseInt(text);
+                        let newNum = num - 1;
+                        like_div.textContent = newNum.toString();
+                    }
+
+                    function toggleIcon(commentId, methodName) {
+                        let dictionary = {
+                            LikeComment: 'like-icon-',
+                            DislikeComment: 'dislike-icon-'
+                        }
+
+                        let icon = document.getElementById(dictionary[methodName] + commentId);
+
+                        let otherIconName = methodName === 'LikeComment' ? 'DislikeComment' : 'LikeComment';
+                        let otherIcon = document.getElementById(dictionary[otherIconName] + commentId);
+
+                        if (methodName === "LikeComment" && icon.classList.contains("fa-regular")) { 
+                            likeCounterSum(commentId);
+                        }
+
+                        if (methodName === "LikeComment" && icon.classList.contains("fa-solid")) {
+                            likeCounterSub(commentId);
+                        }
+
+                        if (methodName === "DislikeComment" && otherIcon.classList.contains("fa-solid")) {
+                            likeCounterSub(commentId);
+                        }
+
+                        if (!icon.classList.contains("fa-solid")) {
+                            otherIcon.classList.remove("fa-solid");
+                            otherIcon.classList.add("fa-regular");
+                        }
+
+                        icon.classList.toggle("fa-regular");
+                        icon.classList.toggle("fa-solid");
+                    }
+
+                    async function setClick(commentId, methodName) {
+                        const response = await fetch(`/Question/${methodName}?commentId=${commentId}`, {
+                            method: 'POST'
+                        });
+                        const data = await response.json();
+                        if (response.ok) {
+                            toggleIcon(commentId, methodName);
+                        }
+                    }
+                }
+
+                function toggleIconInit(commentId, ratingType) {
+                    let dictionary = {
+                        Like: 'like-icon-',
+                        Dislike: 'dislike-icon-'
+                    }
+
+                    let icon = document.getElementById(dictionary[ratingType] + commentId);
+
+                    icon.classList.toggle("fa-regular");
+                    icon.classList.toggle("fa-solid");
+                }
+
+                @foreach (var (comment, userName, ratingValue) in Model.CommentsWithUserNames)
+                {
+                    var commentId = comment.CommentId;
+
+                    if(ratingValue == RatingValue.Like || ratingValue == RatingValue.Dislike)
+                    {
+                        <text>
+                            toggleIconInit('@commentId', '@ratingValue');
+                        </text>
+                    }
+
+                    <text>
+                        setupRatingButton('@commentId');
+                    </text>
+                }
+            </script>
         </div>
     }
 </div>

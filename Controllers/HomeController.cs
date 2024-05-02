@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using PressTheButton.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using PressTheButton.Migrations;
+using PressTheButton.Enums;
 
 namespace PressTheButton.Controllers
 {
@@ -153,23 +154,41 @@ namespace PressTheButton.Controllers
             var yesResponses = question.UserResponses.Count(ur => ur.YesOrNo == true);
             var noResponses = totalResponses - yesResponses;
 
-            var commentsWithUserNames = new List<(Comment comment, string userName)>();
+            var commentsWithUserNames = new List<(Comment comment, string userName, RatingValue ratingValue)>();
 
             var replysWithUserNames = new List<(Reply reply, string userName)>();
 
             foreach (var comment in question.Comments)
             {
                 var user = await _userManager.FindByIdAsync(comment.CreatedBy);
-                if(user != null)
+
+                var ratings = _context.Ratings.Where(r => r.TextId == comment.CommentId &&
+                                                          r.Value == RatingValue.Like).ToList();
+
+                comment.Ratings = ratings;
+
+                if (user != null)
                 {
                     string userName = user.UserName;
 
                     var profilePicture = await _context.ProfilePictures.FirstOrDefaultAsync(p => p.UserId == user.Id);
 
+                    var loggedUser = await _userManager.GetUserAsync(User);
+
+                    var rating = await _context.Ratings.FirstOrDefaultAsync(r => r.TextId == comment.CommentId
+                                                                            && r.UserId == loggedUser.Id);
+
+                    RatingValue ratingValue = RatingValue.Null;
+
+                    if (rating != null)
+                    {
+                        ratingValue = rating.Value;
+                    }
+
                     if(profilePicture == null || profilePicture.Path == null)
                     {
                         comment.ProfilePicturePath = "profile.jpg";
-                        commentsWithUserNames.Add((comment, userName));
+                        commentsWithUserNames.Add((comment, userName, ratingValue));
                     }
                     else
                     {
@@ -178,19 +197,19 @@ namespace PressTheButton.Controllers
                         if (System.IO.File.Exists(filePath))
                         {
                             comment.ProfilePicturePath = profilePicture.Path;
-                            commentsWithUserNames.Add((comment, userName));
+                            commentsWithUserNames.Add((comment, userName, ratingValue));
                         }
                         else
                         {
                             comment.ProfilePicturePath = "profile.jpg";
-                            commentsWithUserNames.Add((comment, userName));
+                            commentsWithUserNames.Add((comment, userName, ratingValue));
                         }
                     }
                 }
                 else
                 {
                     comment.ProfilePicturePath = "profile.jpg";
-                    commentsWithUserNames.Add((comment, "Anônimo"));
+                    commentsWithUserNames.Add((comment, "Anônimo", RatingValue.Null));
                 }
             }
 

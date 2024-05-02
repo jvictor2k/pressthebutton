@@ -1,4 +1,5 @@
-﻿using PressTheButton.Models;
+﻿using PressTheButton.Enums;
+using PressTheButton.Models;
 
 namespace PressTheButton.ViewModels
 {
@@ -9,7 +10,7 @@ namespace PressTheButton.ViewModels
         public double YesPercentage { get; set; }
         public double NoPercentage { get; set; }
         public string ProfilePicturePath { get; set; }
-        public List<(Comment, string)> CommentsWithUserNames { get; set; }
+        public List<(Comment, string, RatingValue)> CommentsWithUserNames { get; set; }
         public List<(Reply, string)> ReplysWithUserNames { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PressTheButton.Context;
+using PressTheButton.Enums;
 using PressTheButton.Models;
 using PressTheButton.ViewModels;
 
@@ -34,10 +35,10 @@ namespace PressTheButton.Controllers
             {
                 var question = await _context.Questions.FirstOrDefaultAsync(q => q.QuestionId == id);
 
-                if(question != null)
+                if (question != null)
                 {
                     var userId = _userManager.GetUserId(User);
-                    if(question.CreatedBy == userId)
+                    if (question.CreatedBy == userId)
                     {
                         return View(question);
                     }
@@ -96,10 +97,10 @@ namespace PressTheButton.Controllers
             {
                 var question = await _context.Questions.FirstOrDefaultAsync(q => q.QuestionId == id);
 
-                if(question != null)
+                if (question != null)
                 {
                     var userId = _userManager.GetUserId(User);
-                    if(question.CreatedBy == userId)
+                    if (question.CreatedBy == userId)
                     {
                         return View(question);
                     }
@@ -122,15 +123,15 @@ namespace PressTheButton.Controllers
         //POST method Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("QuestionId, Text, Negative")]Question question)
+        public async Task<IActionResult> Edit(int id, [Bind("QuestionId, Text, Negative")] Question question)
         {
-            if(id != question.QuestionId)
+            if (id != question.QuestionId)
             {
                 return NotFound();
             }
             else
             {
-                if(ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
                     try
                     {
@@ -167,13 +168,13 @@ namespace PressTheButton.Controllers
             {
                 var question = await _context.Questions.FirstOrDefaultAsync(q => q.QuestionId == id);
 
-                if(question != null)
+                if (question != null)
                 {
                     return View(question);
                 }
-                else 
-                { 
-                    return NotFound(); 
+                else
+                {
+                    return NotFound();
                 }
             }
             else
@@ -189,7 +190,7 @@ namespace PressTheButton.Controllers
         {
             var question = await _context.Questions.FindAsync(id);
 
-            if(question == null)
+            if (question == null)
             {
                 return NotFound();
             }
@@ -204,7 +205,7 @@ namespace PressTheButton.Controllers
         {
             var userId = _userManager.GetUserId(User);
 
-            if(userId == null)
+            if (userId == null)
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -245,7 +246,7 @@ namespace PressTheButton.Controllers
 
             _context.SaveChanges();
 
-            return RedirectToAction("QuestionStats", "Home", new {questionId = questionId});
+            return RedirectToAction("QuestionStats", "Home", new { questionId = questionId });
         }
 
         [HttpPost]
@@ -273,6 +274,92 @@ namespace PressTheButton.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("QuestionStats", "Home", new { questionId = questionId });
+        }
+
+        [HttpPost]
+        public IActionResult LikeComment(int commentId)
+        {
+            var comment = _context.Comments.FirstOrDefault(c => c.CommentId == commentId);
+
+            if (comment == null)
+            {
+                return View("Error");
+            }
+
+            var userId = _userManager.GetUserId(User);
+
+            var userRating = _context.Ratings.FirstOrDefault(r => r.UserId == userId &&
+                                                      r.Type == CommentOrReply.Comment &&
+                                                      r.TextId == commentId);
+
+            if (userRating != null)
+            {
+                _context.Ratings.Remove(userRating);
+                _context.SaveChanges();
+            }
+
+            if(userRating != null && userRating.Value == RatingValue.Like)
+            {
+                return Ok(new { liked = false });
+            }
+
+            comment.Ratings ??= new List<Rating>();
+
+            var newRating = new Rating
+            {
+                UserId = userId,
+                Value = RatingValue.Like,
+                Type = CommentOrReply.Comment,
+                TextId = commentId,
+                Date = DateTime.Now
+            };
+
+            comment.Ratings.Add(newRating);
+            _context.SaveChanges();
+            return Ok(new {liked = true});
+        }
+
+        [HttpPost]
+        public IActionResult DislikeComment(int commentId)
+        {
+            var comment = _context.Comments.FirstOrDefault(c => c.CommentId == commentId);
+
+            if (comment == null)
+            {
+                return View("Error");
+            }
+
+            var userId = _userManager.GetUserId(User);
+
+            var userRating = _context.Ratings.FirstOrDefault(r => r.UserId == userId &&
+                                                      r.Type == CommentOrReply.Comment &&
+                                                      r.TextId == commentId);
+
+            if (userRating != null)
+            {
+                _context.Ratings.Remove(userRating);
+                _context.SaveChanges();
+            }
+
+            if(userRating != null && userRating.Value == RatingValue.Dislike)
+            {
+                return Ok(new { disliked = false });
+            }
+
+            comment.Ratings ??= new List<Rating>();
+
+            var newRating = new Rating
+            {
+                UserId = userId,
+                Value = RatingValue.Dislike,
+                Type = CommentOrReply.Comment,
+                TextId = commentId,
+                Date = DateTime.Now
+            };
+
+            comment.Ratings.Add(newRating);
+            _context.SaveChanges();
+            return Ok(new { disliked = true });
         }
 
         private bool QuestionExists(int id)

@@ -156,18 +156,20 @@ namespace PressTheButton.Controllers
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
 
-                if (user.EmailConfirmed)
+                if (user == null)
                 {
-                    var result = await _signInManager.CheckPasswordSignInAsync(
+                    return RedirectToAction("Register");
+                }
+
+                var result = await _signInManager.CheckPasswordSignInAsync(
                     user, model.Password, false);
 
-                    if (result.Succeeded)
-                    {
-                        await _signInManager.SignInAsync(user, false);
-                        return RedirectToAction("Index", "Home");
-                    }
+                if (user.EmailConfirmed && result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, false);
+                    return RedirectToAction("Index", "Home");
                 }
-                else
+                else if (result.Succeeded)
                 {
                     return View("ConfirmYourAccount");
                 }

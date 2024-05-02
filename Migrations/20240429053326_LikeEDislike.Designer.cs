@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PressTheButton.Context;
 
@@ -11,9 +12,11 @@ using PressTheButton.Context;
 namespace PressTheButton.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240429053326_LikeEDislike")]
+    partial class LikeEDislike
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,7 +255,7 @@ namespace PressTheButton.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("PressTheButton.Models.ProfilePicture", b =>
@@ -271,7 +274,7 @@ namespace PressTheButton.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProfilePictures", (string)null);
+                    b.ToTable("ProfilePictures");
                 });
 
             modelBuilder.Entity("PressTheButton.Models.Question", b =>
@@ -299,7 +302,7 @@ namespace PressTheButton.Migrations
 
                     b.HasKey("QuestionId");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("PressTheButton.Models.Rating", b =>
@@ -337,7 +340,7 @@ namespace PressTheButton.Migrations
 
                     b.HasIndex("ReplyId");
 
-                    b.ToTable("Ratings", (string)null);
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("PressTheButton.Models.Reply", b =>
@@ -377,7 +380,7 @@ namespace PressTheButton.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Replys", (string)null);
+                    b.ToTable("Replys");
                 });
 
             modelBuilder.Entity("PressTheButton.Models.UserResponse", b =>
@@ -404,7 +407,7 @@ namespace PressTheButton.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("UserResponses", (string)null);
+                    b.ToTable("UserResponses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
