@@ -43,7 +43,7 @@
 <p class="mb-5 text-center text-danger">Não apertaram o botão: @Model.NoPercentage.ToString("0.00")%</p>
 
 <form id="commentForm" asp-controller="Question" asp-action="MakeComment" asp-route-questionId="@Model.Question.QuestionId" method="post">
-    <div class="row">
+    <div class="row align-items-center">
         <div class="col-auto">
             <img src="~/images/profilePicture/@Model.ProfilePicturePath" class="img-fixed-size-low" />
         </div>

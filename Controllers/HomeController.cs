@@ -175,8 +175,13 @@ namespace PressTheButton.Controllers
 
                     var loggedUser = await _userManager.GetUserAsync(User);
 
-                    var rating = await _context.Ratings.FirstOrDefaultAsync(r => r.TextId == comment.CommentId
+                    var rating = new Rating();
+
+                    if(loggedUser != null)
+                    {
+                        rating = await _context.Ratings.FirstOrDefaultAsync(r => r.TextId == comment.CommentId
                                                                             && r.UserId == loggedUser.Id);
+                    }
 
                     RatingValue ratingValue = RatingValue.Null;
 
