@@ -1,0 +1,13 @@
+﻿@model List<Notification>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center mt-5 mb-5">Notificações</h1>
+            @foreach(Notification notification in Model)
+            {
+                @await Html.PartialAsync("_NotificationPartial", notification);
+            }
+        </div>
+    </div>
+</div>

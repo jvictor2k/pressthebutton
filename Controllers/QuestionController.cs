@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PressTheButton.Context;
 using PressTheButton.Enums;
 using PressTheButton.Models;
+using PressTheButton.Services.Interfaces;
 using PressTheButton.ViewModels;
 
 namespace PressTheButton.Controllers
@@ -14,11 +15,13 @@ namespace PressTheButton.Controllers
     {
         private readonly AppDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly INotificationService _notificationService;
 
-        public QuestionController(AppDbContext context, UserManager<IdentityUser> userManager)
+        public QuestionController(AppDbContext context, UserManager<IdentityUser> userManager, INotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
+            _notificationService = notificationService;
         }
 
         public async Task<IActionResult> Index()
@@ -225,7 +228,7 @@ namespace PressTheButton.Controllers
         }
 
         [HttpPost]
-        public IActionResult MakeComment(int questionId, string text)
+        public async Task<IActionResult> MakeComment(int questionId, string text)
         {
             var question = _context.Questions.FirstOrDefault(q => q.QuestionId == questionId);
             if (question == null)
@@ -244,13 +247,15 @@ namespace PressTheButton.Controllers
             question.Comments ??= new List<Comment>();
             question.Comments.Add(comment);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
+            await _notificationService.MakeNotificationAsync(questionId, 0, comment.CommentId, User);
 
             return RedirectToAction("QuestionStats", "Home", new { questionId = questionId });
         }
 
         [HttpPost]
-        public IActionResult MakeReply(int commentId, string text, int questionId)
+        public async Task<IActionResult> MakeReply(int commentId, string text, int questionId)
         {
             var comment = _context.Comments.FirstOrDefault(c => c.CommentId == commentId);
 
@@ -271,13 +276,15 @@ namespace PressTheButton.Controllers
             comment.Replys ??= new List<Reply> { reply };
             comment.Replys.Add(reply);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
+            await _notificationService.MakeNotificationAsync(questionId, 1, reply.ReplyId, User);
 
             return RedirectToAction("QuestionStats", "Home", new { questionId = questionId });
         }
 
         [HttpPost]
-        public IActionResult LikeComment(int commentId)
+        public async Task<IActionResult> LikeComment(int commentId)
         {
             var comment = _context.Comments.FirstOrDefault(c => c.CommentId == commentId);
 
@@ -295,7 +302,15 @@ namespace PressTheButton.Controllers
             if (userRating != null)
             {
                 _context.Ratings.Remove(userRating);
-                _context.SaveChanges();
+                var notification = await _context.Notifications.FirstOrDefaultAsync(n => n.Type == CommentReplyOrRating.Rating
+                                                                           && n.ElementId == commentId
+                                                                           && n.SenderUserId == userId);
+                if(notification != null)
+                {
+                    _context.Notifications.Remove(notification);
+                }
+
+                await _context.SaveChangesAsync();
             }
 
             if(userRating != null && userRating.Value == RatingValue.Like)
@@ -315,12 +330,13 @@ namespace PressTheButton.Controllers
             };
 
             comment.Ratings.Add(newRating);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            await _notificationService.MakeNotificationAsync(comment.QuestionId, 2, comment.CommentId, User);
             return Ok(new {liked = true});
         }
 
         [HttpPost]
-        public IActionResult DislikeComment(int commentId)
+        public async Task<IActionResult> DislikeComment(int commentId)
         {
             var comment = _context.Comments.FirstOrDefault(c => c.CommentId == commentId);
 
@@ -338,7 +354,15 @@ namespace PressTheButton.Controllers
             if (userRating != null)
             {
                 _context.Ratings.Remove(userRating);
-                _context.SaveChanges();
+                var notification = await _context.Notifications.FirstOrDefaultAsync(n => n.Type == CommentReplyOrRating.Rating
+                                                                           && n.ElementId == commentId
+                                                                           && n.SenderUserId == userId);
+                if(notification != null)
+                {
+                    _context.Notifications.Remove(notification);
+                }
+
+                await _context.SaveChangesAsync();
             }
 
             if(userRating != null && userRating.Value == RatingValue.Dislike)
@@ -358,7 +382,7 @@ namespace PressTheButton.Controllers
             };
 
             comment.Ratings.Add(newRating);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return Ok(new { disliked = true });
         }
 

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using PressTheButton.Context;
 using PressTheButton.Repositories;
 using PressTheButton.Repositories.Interfaces;
+using PressTheButton.Services;
+using PressTheButton.Services.Interfaces;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +41,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 var app = builder.Build();
 

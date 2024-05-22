@@ -1,0 +1,10 @@
+﻿@model Notification
+
+<div class="card border-primary shadow mb-3">
+    <div class="card-body">
+        <div class="card-text">@Model.Id</div>
+        <div class="card-text">@Model.SenderUserId</div>
+        <div class="card-text">@Model.Date.ToString("dd/MM/yyyy HH:mm")</div>
+        <div class="card-text">@Model.Type</div>
+    </div>
+</div>

@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PressTheButton.Context;
 using PressTheButton.Enums;
 using PressTheButton.Models;
+using PressTheButton.Services.Interfaces;
 
 namespace PressTheButton.Controllers
 {
+    [Authorize]
     public class NotificationController : Controller
     {
         public readonly UserManager<IdentityUser> _userManager;
@@ -19,40 +23,11 @@ namespace PressTheButton.Controllers
 
         public IActionResult Index()
         {
-            return View();
-        }
+            var userId = _userManager.GetUserId(User);
 
-        public void MakeNotification(int questionId, int type, int elementId)
-        {
-            CommentReplyOrRating notificationType = (CommentReplyOrRating)type;
+            List<Notification> notifications = _context.Notifications.Where(n => n.DestinataryUserId == userId).ToList();
 
-            Question question = _context.Questions.FirstOrDefault(q => q.QuestionId == questionId);
-
-            var newNotification = new Notification
-            {
-                Date = DateTime.Now,
-                Type = notificationType,
-                SenderUserId = _userManager.GetUserId(User),
-                Readed = false
-            };
-
-            if(notificationType == CommentReplyOrRating.Comment)
-            {
-                newNotification.DestinataryUserId = question.CreatedBy;
-                newNotification.ElementId = questionId;
-            }
-
-            if(notificationType == CommentReplyOrRating.Reply ||
-               notificationType == CommentReplyOrRating.Rating)
-            {
-                newNotification.ElementId = elementId;
-
-                Comment comment = _context.Comments.FirstOrDefault(c => c.CommentId == elementId);
-                newNotification.DestinataryUserId = comment.CreatedBy;
-            }
-
-            _context.Notifications.Add(newNotification);
-            _context.SaveChanges();
+            return View(notifications);
         }
     }
 }
