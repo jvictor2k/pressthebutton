@@ -26,23 +26,40 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav ml-auto flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark d-inline-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fa-solid fa-house"></i>
+                                <div class="ms-2">Home</div>
+                            </a>
                         </li>
                         @*<li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>*@
                         <li>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Question" asp-action="Index">Dilemas</a>
+                            <a class="nav-link text-dark d-inline-flex align-items-center" asp-area="" asp-controller="Question" asp-action="Index">
+                                <i class="fa-solid fa-list"></i>
+                                <div class="ms-2">Dilemas</div>
+                            </a>
                         </li>
                         <li>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Question" asp-action="AllResponses">Suas Escolhas</a>
+                            <a class="nav-link text-dark d-inline-flex align-items-center" asp-area="" asp-controller="Question" asp-action="AllResponses">
+                                <i class="fa-solid fa-square-check"></i>
+                                <div class="ms-2">Escolhas</div>
+                            </a>
                         </li>
-                        <li>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="EditAccount">Conta</a>
-                        </li>
-                        <li>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Notification" asp-action="Index">Notificações</a>
-                        </li>
+                        @if(User.Identity.IsAuthenticated)
+                        {
+                            <li>
+                                <a class="nav-link text-dark d-inline-flex align-items-center" asp-area="" asp-controller="Account" asp-action="EditAccount">
+                                    <i class="fa-solid fa-user"></i>
+                                    <div class="ms-2">Conta</div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="nav-link text-dark d-inline-flex align-items-center" asp-area="" asp-controller="Notification" asp-action="Index">
+                                    @await Component.InvokeAsync("NotificationCount")
+                                </a>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav flex-grow-1">
                         <partial name="_LoginPartial.cshtml" />

@@ -1,0 +1,20 @@
+﻿@using PressTheButton.ViewModels
+@model NotificationViewModel
+
+<div class="card border-1 border-primary bg-info bg-opacity-10 shadow-sm mb-2">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-auto">
+                <img src="~/images/profilePicture/@Model.ProfilePicPath" class="img-fixed-size-low" />
+            </div>
+            <div class="col-auto">
+                <div class="d-flex justify-content-between">
+                    <p class="card-title me-2 mb-0"><strong>@Model.ProfileName respondeu ao seu comentário</strong></p>
+                    <p class="card-title text-muted mb-0">@Model.Notification.Date.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+                <p class="card-text mt-2">@Model.TextDestinatary</p>
+                <p class="card-text mt-2">@Model.TextSender</p>
+            </div>
+        </div>
+    </div>
+</div>

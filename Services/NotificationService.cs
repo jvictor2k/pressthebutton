@@ -51,5 +51,17 @@ namespace PressTheButton.Services
             _context.Notifications.Add(newNotification);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<int> GetNotificationsCount(string userId)
+        {
+            return await _context.Notifications.Where(n => n.DestinataryUserId == userId
+                                                        && !n.Readed).CountAsync();
+        }
+
+        public async Task<string> GetUserIdAsync(ClaimsPrincipal user)
+        {
+            var userId = await _userManager.GetUserAsync(user);
+            return userId.Id;
+        }
     }
 }

@@ -1,12 +1,25 @@
-﻿@model List<Notification>
+﻿@using PressTheButton.Enums
+@using PressTheButton.ViewModels
+@model List<NotificationViewModel>
 
 <div class="container">
     <div class="row">
         <div class="col-md-12">
             <h1 class="text-center mt-5 mb-5">Notificações</h1>
-            @foreach(Notification notification in Model)
+            @foreach(NotificationViewModel notification in Model)
             {
-                @await Html.PartialAsync("_NotificationPartial", notification);
+                if(notification.Notification.Type == CommentReplyOrRating.Comment)
+                {
+                    @await Html.PartialAsync("_NotificationComment", notification);
+                }
+                else if (notification.Notification.Type == CommentReplyOrRating.Reply)
+                {
+                    @await Html.PartialAsync("_NotificationReply", notification);
+                }
+                else if (notification.Notification.Type == CommentReplyOrRating.Rating)
+                {
+                    @await Html.PartialAsync("_NotificationRating", notification);
+                }
             }
         </div>
     </div>

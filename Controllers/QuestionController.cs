@@ -230,7 +230,7 @@ namespace PressTheButton.Controllers
         [HttpPost]
         public async Task<IActionResult> MakeComment(int questionId, string text)
         {
-            var question = _context.Questions.FirstOrDefault(q => q.QuestionId == questionId);
+            var question = await _context.Questions.FirstOrDefaultAsync(q => q.QuestionId == questionId);
             if (question == null)
             {
                 return NotFound();
@@ -257,7 +257,7 @@ namespace PressTheButton.Controllers
         [HttpPost]
         public async Task<IActionResult> MakeReply(int commentId, string text, int questionId)
         {
-            var comment = _context.Comments.FirstOrDefault(c => c.CommentId == commentId);
+            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.CommentId == commentId);
 
             if (comment == null)
             {
@@ -286,7 +286,7 @@ namespace PressTheButton.Controllers
         [HttpPost]
         public async Task<IActionResult> LikeComment(int commentId)
         {
-            var comment = _context.Comments.FirstOrDefault(c => c.CommentId == commentId);
+            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.CommentId == commentId);
 
             if (comment == null)
             {
@@ -295,7 +295,7 @@ namespace PressTheButton.Controllers
 
             var userId = _userManager.GetUserId(User);
 
-            var userRating = _context.Ratings.FirstOrDefault(r => r.UserId == userId &&
+            var userRating = await _context.Ratings.FirstOrDefaultAsync(r => r.UserId == userId &&
                                                       r.Type == CommentOrReply.Comment &&
                                                       r.TextId == commentId);
 
@@ -338,7 +338,7 @@ namespace PressTheButton.Controllers
         [HttpPost]
         public async Task<IActionResult> DislikeComment(int commentId)
         {
-            var comment = _context.Comments.FirstOrDefault(c => c.CommentId == commentId);
+            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.CommentId == commentId);
 
             if (comment == null)
             {
@@ -347,7 +347,7 @@ namespace PressTheButton.Controllers
 
             var userId = _userManager.GetUserId(User);
 
-            var userRating = _context.Ratings.FirstOrDefault(r => r.UserId == userId &&
+            var userRating = await _context.Ratings.FirstOrDefaultAsync(r => r.UserId == userId &&
                                                       r.Type == CommentOrReply.Comment &&
                                                       r.TextId == commentId);
 

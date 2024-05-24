@@ -3,24 +3,25 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <ul class="nav-item">
+    <li class="nav-item">
         <form method="post" asp-controller="account" asp-action="logout">
             <button type="submit" style="width:auto" class="nav-link btn btn-link py-0">
+                <i class="fa-solid fa-right-to-bracket me-1"></i>
                 Logout @User.Identity.Name
             </button>
         </form>
-    </ul>
+    </li>
 }
 else
 {
-    <ul class="nav-item">
+    <li class="nav-item">
         <a class="nav-link text-primary" asp-controller="account" asp-action="register">
             Cadastrar
         </a>
-    </ul>
-    <ul class="nav-item">
+    </li>
+    <li class="nav-item">
         <a class="nav-link text-primary" asp-controller="account" asp-action="login">
             Login
         </a>
-    </ul>
+    </li>
 }
