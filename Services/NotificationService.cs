@@ -42,7 +42,14 @@ namespace PressTheButton.Services
                 newNotification.DestinataryUserId = question.CreatedBy;
             }
 
-            if (notificationType == CommentReplyOrRating.Reply || notificationType == CommentReplyOrRating.Rating)
+            if(notificationType == CommentReplyOrRating.Reply)
+            {
+                Reply reply = await _context.Replys.FirstOrDefaultAsync(r => r.ReplyId == elementId);
+                var commentReplied = await _context.Comments.FirstOrDefaultAsync(c => c.CommentId == reply.CommentId);
+                newNotification.DestinataryUserId = commentReplied.CreatedBy;
+            }
+
+            if (notificationType == CommentReplyOrRating.Rating)
             {
                 Comment comment = await _context.Comments.FirstOrDefaultAsync(c => c.CommentId == elementId);
                 newNotification.DestinataryUserId = comment.CreatedBy;

@@ -48,13 +48,20 @@ namespace PressTheButton.Controllers
                 {
                     Notification = notification,
                     Question = question,
-                    ProfilePicPath = profilePic.Path,
                     ProfileName = profileName
                 };
 
-                var filePath = Path.Combine(_filePath, "images", "profilePicture", notificationVMItem.ProfilePicPath);
+                if (profilePic != null)
+                {
+                    notificationVMItem.ProfilePicPath = profilePic.Path;
+                    var filePath = Path.Combine(_filePath, "images", "profilePicture", notificationVMItem.ProfilePicPath);
 
-                if (profilePic == null || notificationVMItem.ProfilePicPath == null || !System.IO.File.Exists(filePath))
+                    if(!System.IO.File.Exists(filePath))
+                    {
+                        notificationVMItem.ProfilePicPath = "profile.jpg";
+                    }
+                }
+                else
                 {
                     notificationVMItem.ProfilePicPath = "profile.jpg";
                 }
