@@ -20,18 +20,20 @@
                     isNewNotificationFound = true;
                 }
 
-                if(notification.Notification.Type == CommentReplyOrRating.Comment)
-                {
-                    @await Html.PartialAsync("_NotificationComment", notification);
-                }
-                else if (notification.Notification.Type == CommentReplyOrRating.Reply)
-                {
-                    @await Html.PartialAsync("_NotificationReply", notification);
-                }
-                else if (notification.Notification.Type == CommentReplyOrRating.Rating)
-                {
-                    @await Html.PartialAsync("_NotificationRating", notification);
-                }
+                <a href="@notification.Url" class="notification-card">
+                    @if(notification.Notification.Type == CommentReplyOrRating.Comment)
+                    {
+                        @await Html.PartialAsync("_NotificationComment", notification);
+                    }
+                    else if (notification.Notification.Type == CommentReplyOrRating.Reply)
+                    {
+                        @await Html.PartialAsync("_NotificationReply", notification);
+                    }
+                    else if (notification.Notification.Type == CommentReplyOrRating.Rating)
+                    {
+                        @await Html.PartialAsync("_NotificationRating", notification);
+                    }
+                </a>
             }
         </div>
     </div>

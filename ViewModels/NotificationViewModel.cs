@@ -12,5 +12,6 @@ namespace PressTheButton.ViewModels
         public string TextSender { get; set; }
         public string TextDestinatary { get; set; }
         public bool IsNew { get; set; }
+        public string Url { get; set; }
     }
 }

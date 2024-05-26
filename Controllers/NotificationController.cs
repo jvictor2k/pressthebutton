@@ -80,6 +80,8 @@ namespace PressTheButton.Controllers
 
                     var destinataryQuestion = await _context.Questions.FirstOrDefaultAsync(q =>  q.QuestionId == notification.QuestionId);
                     notificationVMItem.TextDestinatary = destinataryQuestion.Text + " Mas... " + destinataryQuestion.Negative;
+
+                    notificationVMItem.Url = Url.Action("QuestionStats", "Home", new { questionId = notification.QuestionId }) + "#comment-" + notification.ElementId;
                 }
 
                 if(notification.Type == CommentReplyOrRating.Reply)
@@ -89,12 +91,16 @@ namespace PressTheButton.Controllers
 
                     var destinataryComment = await _context.Comments.FirstOrDefaultAsync(c => c.CommentId == senderReply.CommentId);
                     notificationVMItem.TextDestinatary = destinataryComment.Text;
+
+                    notificationVMItem.Url = Url.Action("QuestionStats", "Home", new { questionId = notification.QuestionId }) + "#comment-" + senderReply.CommentId;
                 }
 
                 if(notification.Type == CommentReplyOrRating.Rating)
                 {
                     var destinataryComment = await _context.Comments.FirstOrDefaultAsync(c => c.CommentId == notification.ElementId);
                     notificationVMItem.TextDestinatary = destinataryComment.Text;
+
+                    notificationVMItem.Url = Url.Action("QuestionStats", "Home", new { questionId = notification.QuestionId }) + "#comment-" + notification.ElementId;
                 }
 
                 notificationVMItem.IsNew = notification.Readed == true ? false : true;
