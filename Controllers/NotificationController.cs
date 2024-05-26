@@ -30,7 +30,9 @@ namespace PressTheButton.Controllers
         {
             var userId = _userManager.GetUserId(User);
 
-            List<Notification> notifications = _context.Notifications.Where(n => n.DestinataryUserId == userId).ToList();
+            List<Notification> notifications = await _context.Notifications.Where(n => n.DestinataryUserId == userId)
+                                                                           .OrderBy(n => n.Readed)
+                                                                           .ThenByDescending(n => n.Date).ToListAsync();
 
             List<NotificationViewModel> notificationsViewModel = new List<NotificationViewModel>();
 
@@ -95,10 +97,27 @@ namespace PressTheButton.Controllers
                     notificationVMItem.TextDestinatary = destinataryComment.Text;
                 }
 
+                notificationVMItem.IsNew = notification.Readed == true ? false : true;
+
                 notificationsViewModel.Add(notificationVMItem);
             }
 
+            await ReadNotifications(userId);
+
             return View(notificationsViewModel);
+        }
+
+        private async Task ReadNotifications(string userId)
+        {
+            var notifications = await _context.Notifications.Where(n => n.DestinataryUserId == userId
+                                                               && !n.Readed).ToListAsync();
+
+            foreach(Notification notification in notifications)
+            {
+                notification.Readed = true;
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

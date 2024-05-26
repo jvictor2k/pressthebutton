@@ -1,7 +1,7 @@
 ﻿@using PressTheButton.ViewModels
 @model NotificationViewModel
 
-<div class="card border-1 border-primary bg-info bg-opacity-10 shadow-sm mb-2">
+<div class="alert @(Model.IsNew ? "bg-info" : "bg-light") card border-1 border-primary bg-opacity-10 shadow-sm mb-2">
     <div class="card-body">
         <div class="row">
             <div class="col-auto">
@@ -10,7 +10,11 @@
             <div class="col-auto">
                 <div class="d-flex justify-content-between">
                     <p class="card-title me-2 mb-0"><strong>@Model.ProfileName curtiu seu comentário</strong></p>
-                    <p class="card-title text-muted mb-0">@Model.Notification.Date.ToString("dd/MM/yyyy HH:mm")</p>
+                    <p class="card-title text-muted mb-0 me-2">@Model.Notification.Date.ToString("dd/MM/yyyy HH:mm")</p>
+                    @if (Model.IsNew)
+                    {
+                        <span class="card-title badge bg-primary">NOVO</span>
+                    }
                 </div>
                 <p class="card-text mt-2">@Model.TextDestinatary</p>
             </div>
