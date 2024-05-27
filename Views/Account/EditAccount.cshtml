@@ -2,6 +2,10 @@
 @using PressTheButton.Models
 @model IdentityUser
 
+@{
+    string limitedUserName = Model.UserName.Length > 20 ? Model.UserName.Substring(0, 20) + "..." : Model.UserName;
+}
+
 <div class="container">
     <div class="row justify-content-center align-items-center text-center">
         <div class="col-md-12">
@@ -9,7 +13,7 @@
             <div class="card bg-primary text-white">
                 <div class="card-body">
                     <div class="card-text">
-                        <h4>Username: <b>@Model.UserName</b></h4>
+                        <h4>Username: <b>@limitedUserName</b></h4>
                     </div>
                 </div>
             </div>

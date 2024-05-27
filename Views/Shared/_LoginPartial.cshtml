@@ -1,13 +1,22 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 
+@{
+    string limitedUserName = "";
+
+    if (SignInManager.IsSignedIn(User))
+    {
+        limitedUserName = User.Identity.Name.Length > 20 ? User.Identity.Name.Substring(0, 20) + "..." : User.Identity.Name;
+    }
+}
+
 @if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item">
         <form method="post" asp-controller="account" asp-action="logout">
             <button type="submit" style="width:auto" class="nav-link btn btn-link py-0">
                 <i class="fa-solid fa-right-to-bracket me-1"></i>
-                Logout @User.Identity.Name
+                Logout @limitedUserName
             </button>
         </form>
     </li>

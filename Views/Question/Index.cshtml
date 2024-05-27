@@ -18,9 +18,12 @@
     <tbody>
         @foreach (var question in Model)
         {
+            string limitedText = question.Text.Length > 80 ? question.Text.Substring(0, 80) + "..." : question.Text;
+            string limitedNeg = question.Negative.Length > 80 ? question.Negative.Substring(0, 80) + "..." : question.Negative;
+
             <tr>
-                <td class="">@question.Text</td>
-                <td>@question.Negative</td>
+                <td>@limitedText</td>
+                <td>@limitedNeg</td>
                 <td>
                     <div class="container">
                         <div class="row">
